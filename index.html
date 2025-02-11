@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management Tool</title>
+    <style>
+        /*  css/style.css - Modern & Apple-inspired Styling - INLINED */
+        /* Global Styles and Reset */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 25px 30px;
+            text-align: left;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding: 25px 30px;
+            flex-grow: 1;
+        }
+
+        section {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.0; /* Background image opacity set to 0 for single file - remove or adjust if needed */
+            z-index: -1;
+            border-radius: inherit;
+        }
+
+        #auth-section::before { background-image: none; }
+
+        section h2, section h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        form input[type="text"],
+        form input[type="number"],
+        form input[type="date"],
+        form select,
+        form textarea {
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: #444;
+        }
+
+        form input[type="text"]:focus,
+        form input[type="number"]:focus,
+        form input[type="date"]:focus,
+        form select:focus,
+        form textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+        }
+
+        form button, #authorize_button, #signout_button {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        form button:hover, #authorize_button:hover, #signout_button:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+        form button:active, #authorize_button:active, #signout_button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #team-member-list, #project-list, #time-log-list, #project-update-list {
+            margin-top: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        #team-member-list > div, #project-list > div, #time-log-list > div, #project-update-list > div {
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            color: #444;
+        }
+
+        #team-member-list > div:last-child, #project-list > div:last-child, #time-log-list > div:last-child, #project-update-list > div:last-child {
+            border-bottom: none;
+        }
+
+        /* Project List Items with Background Images */
+        #project-list > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        #project-list > div::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: -1;
+            border-radius: inherit;
+        }
+
+        #project-list > div > span {
+            flex-grow: 1;
+            margin-right: 15px;
+            font-weight: 500;
+            z-index: 1;
+            position: relative;
+        }
+
+        #project-list progress {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 150px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #eee;
+            color: #007bff;
+            z-index: 1;
+            position: relative;
+        }
+
+        #project-list progress::-webkit-progress-bar {
+            background-color: #eee;
+            border-radius: 5px;
+        }
+
+        #project-list progress::-webkit-progress-value {
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        #project-list progress::-moz-progress-bar {
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        #project-list > div > span:last-child {
+            margin-left: 10px;
+            font-size: 0.9rem;
+            color: #777;
+            z-index: 1;
+            position: relative;
+        }
+
+        #project-list > div:last-child {
+            margin-bottom: 0;
+        }
+
+
+        #charts {
+            text-align: center;
+        }
+
+        #auth-section {
+            text-align: center;
+            padding: 50px 30px;
+        }
+
+        #auth_status {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #777;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Project Management Tool</h1>
+    </header>
+
+    <main>
+        <section id="auth-section">
+            <button id="authorize_button" style="display: none;">Authorize</button>
+            <button id="signout_button" style="display: none;">Sign Out</button>
+            <p id="auth_status"> </p>
+        </section>
+
+        <section id="team-members">
+            <h2>Team Members</h2>
+            <div id="team-member-list">
+                <!-- Team members will be listed here -->
+            </div>
+            <div id="add-team-member-form">
+                <h3>Add New Team Member</h3>
+                <form id="team-member-form">
+                    <label for="memberName">Name:</label>
+                    <input type="text" id="memberName" name="memberName" required><br><br>
+
+                    <label for="memberRole">Role:</label>
+                    <input type="text" id="memberRole" name="memberRole"><br><br>
+
+                    <button type="submit">Add Team Member</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2>Projects</h2>
+            <div id="project-list">
+                <!-- Projects will be listed here -->
+            </div>
+            <div id="add-project-form">
+                <h3>Add New Project</h3>
+                <form id="project-form">
+                    <label for="projectName">Project Name:</label>
+                    <input type="text" id="projectName" name="projectName" required><br><br>
+                    <label for="projectEstimate">Estimated Time (hours):</label>
+                    <input type="number" id="projectEstimate" name="projectEstimate" min="0" step="0.5"><br><br>
+                    <label for="projectImageURL">Project Image URL:</label>
+                    <input type="text" id="projectImageURL" name="projectImageURL" placeholder="Enter image URL"><br><br>
+                    <button type="submit">Add Project</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="time-tracking">
+            <h2>Time Tracking</h2>
+            <div id="time-log-list">
+                <!-- Time logs will be listed here -->
+            </div>
+            <div id="add-time-log-form">
+                <h3>Log Time</h3>
+                <form id="time-log-form">
+                    <label for="timeLogMember">Team Member:</label>
+                    <select id="timeLogMember" name="timeLogMember" required>
+                        <!-- Team members options will be loaded here -->
+                    </select><br><br>
+
+                    <label for="timeLogProject">Project:</label>
+                    <select id="timeLogProject" name="timeLogProject" required>
+                        <!-- Project options will be loaded here -->
+                    </select><br><br>
+
+                    <label for="timeSpent">Time Spent (hours):</label>
+                    <input type="number" id="timeSpent" name="timeSpent" min="0" step="0.5" required><br><br>
+
+                    <label for="logDate">Date:</label>
+                    <input type="date" id="logDate" name="logDate" required><br><br>
+
+                    <button type="submit">Log Time</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="charts">
+            <h2>Project Time Analysis</h2>
+            <canvas id="projectTimeChart" width="400" height="200"></canvas>
+        </section>
+
+        <section id="project-updates">
+            <h2>Project Updates</h2>
+            <div id="project-update-list">
+                <!-- Project updates will be listed here -->
+            </div>
+            <div id="add-project-update-form">
+                <h3>Add Project Update</h3>
+                <form id="project-update-form">
+                    <label for="updateProject">Project:</label>
+                    <select id="updateProject" name="updateProject" required>
+                        <!-- Project options will be loaded here -->
+                    </select><br><br>
+
+                    <label for="updateText">Update:</label>
+                    <textarea id="updateText" name="updateText" rows="4" required></textarea><br><br>
+
+                    <button type="submit">Add Update</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2023 Your Project Management Tool</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        /*  js/google-sheets-api.js - INLINED */
+        const googleSheetsAPI = {
+            CLIENT_ID: 'YOUR_CLIENT_ID', // **REPLACE WITH YOUR ACTUAL CLIENT ID**
+            SPREADSHEET_ID: 'YOUR_SPREADSHEET_ID', // **REPLACE WITH YOUR GOOGLE SHEET ID**
+            SCOPES: ['https://www.googleapis.com/auth/spreadsheets'],
+            SHEET_NAME_TEAM_MEMBERS: 'Team Members',
+            SHEET_NAME_PROJECTS: 'Projects',
+            SHEET_NAME_TIME_LOGS: 'Time Logs',
+            SHEET_NAME_UPDATES: 'Project Updates',
+
+            googleAuth: null,
+
+            initGapiClient: async function() {
+                return gapi.client.init({
+                    apiKey: null,
+                    clientId: this.CLIENT_ID,
+                    discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                    scope: this.SCOPES.join(' ')
+                });
+            },
+
+            loadAuth2: async function() {
+                return new Promise((resolve) => {
+                    gapi.load('auth2', resolve);
+                });
+            },
+
+            initAuthClient: async function() {
+                await this.loadAuth2();
+                this.googleAuth = gapi.auth2.init({
+                    client_id: this.CLIENT_ID,
+                    scope: this.SCOPES.join(' ')
+                });
+            },
+
+            signIn: async function() {
+                return this.googleAuth.signIn();
+            },
+
+            signOut: async function() {
+                return this.googleAuth.signOut();
+            },
+
+            isSignedIn: function() {
+                return this.googleAuth.isSignedIn.get();
+            },
+
+            getTeamMembers: async function() {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_TEAM_MEMBERS}!A:B`,
+                    });
+                    const values = response.result.values;
+                    if (!values || values.length === 0) {
+                        return [];
+                    }
+                    const teamMembers = [];
+                    for (let i = 1; i < values.length; i++) {
+                        const row = values[i];
+                        if (row && row.length >= 2) {
+                            teamMembers.push({ name: row[0], role: row[1] });
+                        }
+                    }
+                    return teamMembers;
+                } catch (error) {
+                    console.error("Error fetching team members:", error);
+                    throw error;
+                }
+            },
+
+            addTeamMember: async function(teamMemberData) {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.append({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_TEAM_MEMBERS}!A:B`,
+                        valueInputOption: 'USER_ENTERED',
+                        insertDataOption: 'INSERT_ROWS',
+                        resource: {
+                            values: [[teamMemberData.name, teamMemberData.role]],
+                        },
+                    });
+                    return response;
+                } catch (error) {
+                    console.error("Error adding team member:", error);
+                    throw error;
+                }
+            },
+
+            getProjects: async function() {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_PROJECTS}!A:C`,
+                    });
+                    const values = response.result.values;
+                    if (!values || values.length === 0) {
+                        return [];
+                    }
+                    const projects = [];
+                    for (let i = 1; i < values.length; i++) {
+                        const row = values[i];
+                        if (row && row.length >= 3) {
+                            projects.push({
+                                name: row[0],
+                                estimatedTime: parseFloat(row[1]) || 0,
+                                imageURL: row[2]
+                            });
+                        } else if (row && row.length >= 2) {
+                            projects.push({ name: row[0], estimatedTime: parseFloat(row[1]) || 0, imageURL: '' });
+                        } else if (row && row.length >= 1) {
+                            projects.push({ name: row[0], estimatedTime: 0, imageURL: '' });
+                        }
+                    }
+                    return projects;
+                } catch (error) {
+                    console.error("Error fetching projects:", error);
+                    throw error;
+                }
+            },
+
+            addProject: async function(projectData) {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.append({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_PROJECTS}!A:C`,
+                        valueInputOption: 'USER_ENTERED',
+                        insertDataOption: 'INSERT_ROWS',
+                        resource: {
+                            values: [[projectData.name, projectData.estimatedTime, projectData.imageURL]],
+                        },
+                    });
+                    return response;
+                } catch (error) {
+                    console.error("Error adding project:", error);
+                    throw error;
+                }
+            },
+
+            getTimeLogs: async function() {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_TIME_LOGS}!A:D`,
+                    });
+                    const values = response.result.values;
+                    if (!values || values.length === 0) {
+                        return [];
+                    }
+                    const timeLogs = [];
+                    for (let i = 1; i < values.length; i++) {
+                        const row = values[i];
+                        if (row && row.length >= 4) {
+                            timeLogs.push({
+                                member: row[0],
+                                project: row[1],
+                                timeSpent: parseFloat(row[2]),
+                                date: row[3]
+                            });
+                        }
+                    }
+                    return timeLogs;
+                } catch (error) {
+                    console.error("Error fetching time logs:", error);
+                    throw error;
+                }
+            },
+
+            addTimeLog: async function(timeLogData) {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.append({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_TIME_LOGS}!A:D`,
+                        valueInputOption: 'USER_ENTERED',
+                        insertDataOption: 'INSERT_ROWS',
+                        resource: {
+                            values: [[timeLogData.member, timeLogData.project, timeLogData.timeSpent, timeLogData.date]],
+                        },
+                    });
+                    return response;
+                } catch (error) {
+                    console.error("Error adding time log:", error);
+                    throw error;
+                }
+            },
+
+            getProjectUpdates: async function() {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_UPDATES}!A:D`,
+                    });
+                    const values = response.result.values;
+                    if (!values || values.length === 0) {
+                        return [];
+                    }
+                    const updates = [];
+                    for (let i = 1; i < values.length; i++) {
+                        const row = values[i];
+                        if (row && row.length >= 4) {
+                            updates.push({
+                                project: row[0],
+                                date: row[1],
+                                author: row[2],
+                                text: row[3]
+                            });
+                        }
+                    }
+                    return updates;
+                } catch (error) {
+                    console.error("Error fetching project updates:", error);
+                    throw error;
+                }
+            },
+
+            addProjectUpdate: async function(updateData) {
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.append({
+                        spreadsheetId: this.SPREADSHEET_ID,
+                        range: `${this.SHEET_NAME_UPDATES}!A:D`,
+                        valueInputOption: 'USER_ENTERED',
+                        insertDataOption: 'INSERT_ROWS',
+                        resource: {
+                            values: [[updateData.project, updateData.date, updateData.author, updateData.text]],
+                        },
+                    });
+                    return response;
+                } catch (error) {
+                    console.error("Error adding project update:", error);
+                    throw error;
+                }
+            },
+        };
+
+        /*  js/script.js - INLINED */
+        let googleAuthClient;
+
+        function gapiLoaded() {
+            googleSheetsAPI.loadAuth2()
+                .then(googleSheetsAPI.initAuthClient.bind(googleSheetsAPI))
+                .then(() => {
+                    googleAuthClient = googleSheetsAPI.googleAuth;
+                    document.getElementById('authorize_button').onclick = handleAuthClick;
+                    document.getElementById('signout_button').onclick = handleSignoutClick;
+                    updateSigninStatus(googleAuthClient.isSignedIn.get());
+                    googleAuthClient.isSignedIn.listen(updateSigninStatus);
+                })
+                .catch(error => {
+                    console.error("Error initializing Google Auth:", error);
+                    document.getElementById('auth_status').innerText = 'Error initializing Google Auth. Check console.';
+                });
+
+            googleSheetsAPI.initGapiClient()
+                .then(() => {
+                    console.log("gapi client initialized for sheets");
+                    loadInitialData();
+                })
+                .catch(error => {
+                    console.error("Error initializing gapi client:", error);
+                    document.getElementById('auth_status').innerText = 'Error initializing gapi client. Check console.';
+                });
+        }
+
+        function handleAuthClick() {
+            googleSheetsAPI.signIn();
+        }
+
+        function handleSignoutClick() {
+            googleSheetsAPI.signOut();
+        }
+
+        function updateSigninStatus(isSignedIn) {
+            const authorizeButton = document.getElementById('authorize_button');
+            const signoutButton = document.getElementById('signout_button');
+            const authStatus = document.getElementById('auth_status');
+
+            if (isSignedIn) {
+                authorizeButton.style.display = 'none';
+                signoutButton.style.display = 'block';
+                authStatus.innerText = 'Signed in';
+                document.querySelectorAll('section:not(#auth-section)').forEach(section => section.style.display = 'block');
+            } else {
+                authorizeButton.style.display = 'block';
+                signoutButton.style.display = 'none';
+                authStatus.innerText = 'Not signed in. Please authorize.';
+                document.querySelectorAll('section:not(#auth-section)').forEach(section => section.style.display = 'none');
+            }
+        }
+
+        async function loadInitialData() {
+            if (!googleSheetsAPI.isSignedIn()) {
+                console.log("Not signed in, data loading deferred.");
+                return;
+            }
+            await fetchTeamMembersAndUpdateList();
+            await fetchProjectsAndUpdateList();
+            await fetchTimeLogsAndCreateChart();
+            await fetchProjectUpdatesAndUpdateList();
+            await populateProjectDropdownForUpdates();
+            await populateTeamMemberDropdown();
+            await populateProjectDropdown();
+        }
+
+
+        // --- Team Member Section ---
+        const teamMemberForm = document.getElementById('team-member-form');
+        const teamMemberList = document.getElementById('team-member-list');
+
+        teamMemberForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const memberName = document.getElementById('memberName').value;
+            const memberRole = document.getElementById('memberRole').value;
+
+            try {
+                await googleSheetsAPI.addTeamMember({ name: memberName, role: memberRole });
+                console.log("Team member added successfully.");
+                await fetchTeamMembersAndUpdateList();
+                populateTeamMemberDropdown();
+                teamMemberForm.reset();
+            } catch (error) {
+                console.error("Error adding team member:", error);
+                alert("Failed to add team member. See console for details.");
+            }
+        });
+
+        async function fetchTeamMembersAndUpdateList() {
+            teamMemberList.innerHTML = 'Loading team members...';
+            try {
+                const teamMembers = await googleSheetsAPI.getTeamMembers();
+                teamMemberList.innerHTML = '';
+
+                if (teamMembers.length === 0) {
+                    teamMemberList.innerHTML = 'No team members yet.';
+                    return;
+                }
+
+                teamMembers.forEach(member => {
+                    const memberDiv = document.createElement('div');
+                    memberDiv.textContent = `${member.name} (${member.role})`;
+                    teamMemberList.appendChild(memberDiv);
+                });
+            } catch (error) {
+                console.error("Error fetching and updating team member list:", error);
+                teamMemberList.innerHTML = 'Error loading team members. Check console.';
+            }
+        }
+
+
+        // --- Project Section ---
+        const projectForm = document.getElementById('project-form');
+        const projectList = document.getElementById('project-list');
+
+        projectForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const projectName = document.getElementById('projectName').value;
+            const projectEstimate = document.getElementById('projectEstimate').value;
+            const projectImageURL = document.getElementById('projectImageURL').value;
+
+            const projectData = {
+                name: projectName,
+                estimatedTime: projectEstimate,
+                imageURL: projectImageURL
+            };
+
+            try {
+                await googleSheetsAPI.addProject(projectData);
+                console.log("Project added successfully.");
+                await fetchProjectsAndUpdateList();
+                populateProjectDropdown();
+                populateProjectDropdownForUpdates();
+                projectForm.reset();
+            } catch (error) {
+                console.error("Error adding project:", error);
+                alert("Failed to add project. See console for details.");
+            }
+        });
+
+        async function fetchProjectsAndUpdateList() {
+            projectList.innerHTML = 'Loading projects...';
+            try {
+                const projects = await googleSheetsAPI.getProjects();
+                const timeLogs = await googleSheetsAPI.getTimeLogs();
+
+                projectList.innerHTML = '';
+
+                if (projects.length === 0) {
+                    projectList.innerHTML = 'No projects yet.';
+                    return;
+                }
+
+                projects.forEach(project => {
+                    const projectDiv = document.createElement('div');
+                    projectDiv.style.backgroundImage = `url('${project.imageURL}')`;
+
+                    const projectNameSpan = document.createElement('span');
+                    projectNameSpan.textContent = project.name + ' ';
+
+                    let totalTimeSpent = 0;
+                    timeLogs.forEach(log => {
+                        if (log.project === project.name) {
+                            totalTimeSpent += log.timeSpent;
+                        }
+                    });
+
+                    let progressPercent = 0;
+                    if (project.estimatedTime > 0) {
+                        progressPercent = Math.min(100, Math.round((totalTimeSpent / project.estimatedTime) * 100));
+                    }
+
+                    const progressBar = document.createElement('progress');
+                    progressBar.value = progressPercent;
+                    progressBar.max = 100;
+
+                    const progressTextSpan = document.createElement('span');
+                    progressTextSpan.textContent = ` (${progressPercent}%)`;
+
+                    projectDiv.appendChild(projectNameSpan);
+                    projectDiv.appendChild(progressBar);
+                    projectDiv.appendChild(progressTextSpan);
+                    projectList.appendChild(projectDiv);
+                });
+            } catch (error) {
+                console.error("Error fetching and updating project list:", error);
+                projectList.innerHTML = 'Error loading projects. Check console.';
+            }
+        }
+
+
+        // --- Time Tracking Section ---
+        const timeLogForm = document.getElementById('time-log-form');
+        const timeLogList = document.getElementById('time-log-list');
+        const timeLogMemberSelect = document.getElementById('timeLogMember');
+        const timeLogProjectSelect = document.getElementById('timeLogProject');
+
+        timeLogForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const timeLogMember = document.getElementById('timeLogMember').value;
+            const timeLogProject = document.getElementById('timeLogProject').value;
+            const timeSpent = document.getElementById('timeSpent').value;
+            const logDate = document.getElementById('logDate').value;
+
+            const timeLogData = {
+                member: timeLogMember,
+                project: timeLogProject,
+                timeSpent: timeSpent,
+                date: logDate
+            };
+
+            try {
+                await googleSheetsAPI.addTimeLog(timeLogData);
+                console.log("Time log added:", response);
+                fetchTimeLogsAndCreateChart();
+                timeLogForm.reset();
+            } catch (error) {
+                console.error("Error adding time log:", error);
+                alert("Failed to add time log. See console for details.");
+            }
+        });
+
+        async function fetchTimeLogsAndCreateChart() {
+            try {
+                const timeLogs = await googleSheetsAPI.getTimeLogs();
+                createProjectTimeChart(timeLogs);
+            } catch (error) {
+                console.error("Error fetching time logs for chart:", error);
+                alert("Error fetching time logs for chart. See console.");
+            }
+        }
+
+        function createProjectTimeChart(timeLogs) {
+            const projectTimeData = {};
+            timeLogs.forEach(log => {
+                const project = log.project;
+                const timeSpent = log.timeSpent;
+                projectTimeData[project] = (projectTimeData[project] || 0) + timeSpent;
+            });
+
+            const projectNames = Object.keys(projectTimeData);
+            const timeSpentValues = Object.values(projectTimeData);
+
+            const ctx = document.getElementById('projectTimeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: projectNames,
+                    datasets: [{
+                        label: 'Time Spent (hours) per Project',
+                        data: timeSpentValues,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Hours'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Projects'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // --- Project Update Section ---
+        const projectUpdateForm = document.getElementById('project-update-form');
+        const projectUpdateList = document.getElementById('project-update-list');
+        const updateProjectSelect = document.getElementById('updateProject');
+
+        projectUpdateForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const updateProject = document.getElementById('updateProject').value;
+            const updateText = document.getElementById('updateText').value;
+            const updateDate = new Date().toLocaleDateString();
+            const updateAuthor = "User";
+
+            const updateData = {
+                project: updateProject,
+                date: updateDate,
+                author: updateAuthor,
+                text: updateText
+            };
+
+            try {
+                await googleSheetsAPI.addProjectUpdate(updateData);
+                console.log("Project update added successfully.");
+                await fetchProjectUpdatesAndUpdateList();
+                projectUpdateForm.reset();
+            } catch (error) {
+                console.error("Error adding project update:", error);
+                alert("Failed to add project update. See console for details.");
+            }
+        });
+
+        async function fetchProjectUpdatesAndUpdateList() {
+            projectUpdateList.innerHTML = 'Loading project updates...';
+            try {
+                const updates = await googleSheetsAPI.getProjectUpdates();
+                projectUpdateList.innerHTML = '';
+
+                if (updates.length === 0) {
+                    projectUpdateList.innerHTML = 'No updates yet.';
+                    return;
+                }
+
+                updates.forEach(update => {
+                    const updateDiv = document.createElement('div');
+                    updateDiv.innerHTML = `<strong>${update.project}</strong> (${update.date}, ${update.author}): ${update.text}`;
+                    projectUpdateList.appendChild(updateDiv);
+                });
+            } catch (error) {
+                console.error("Error fetching and updating project update list:", error);
+                projectUpdateList.innerHTML = 'Error loading project updates. Check console.';
+            }
+        }
+
+        function populateProjectDropdownForUpdates() {
+            return googleSheetsAPI.getProjects()
+                .then(projects => {
+                    updateProjectSelect.innerHTML = '';
+                    projects.forEach(project => {
+                        const option = document.createElement('option');
+                        option.value = project.name;
+                        option.textContent = project.name;
+                        updateProjectSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error populating project dropdown for updates:", error);
+                });
+        }
+
+        function populateTeamMemberDropdown() {
+            return googleSheetsAPI.getTeamMembers()
+                .then(teamMembers => {
+                    timeLogMemberSelect.innerHTML = '';
+                    teamMembers.forEach(member => {
+                        const option = document.createElement('option');
+                        option.value = member.name;
+                        option.textContent = member.name;
+                        timeLogMemberSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error populating team member dropdown:", error);
+                });
+        }
+
+        function populateProjectDropdown() {
+            return googleSheetsAPI.getProjects()
+                .then(projects => {
+                    timeLogProjectSelect.innerHTML = '';
+                    projects.forEach(project => {
+                        const option = document.createElement('option');
+                        option.value = project.name;
+                        option.textContent = project.name;
+                        timeLogProjectSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error populating project dropdown:", error);
+                });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initially hide content sections until authorized
+            document.querySelectorAll('section:not(#auth-section)').forEach(section => section.style.display = 'none');
+        });
+
+        async function loadInitialData() {
+            if (!googleSheetsAPI.isSignedIn()) {
+                console.log("Not signed in, data loading deferred.");
+                return;
+            }
+            await fetchTeamMembersAndUpdateList();
+            await fetchProjectsAndUpdateList();
+            await fetchTimeLogsAndCreateChart();
+            await fetchProjectUpdatesAndUpdateList();
+            await populateProjectDropdownForUpdates();
+            await populateTeamMemberDropdown();
+            await populateProjectDropdown();
+        }
+
+
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+</body>
+</html>
